@@ -74,11 +74,13 @@ CREATE  TABLE lms.learner (
  
  CREATE  TABLE lms.learnerquestions ( 
 	id                   INT   AUTO_INCREMENT  PRIMARY KEY ,
+    languageid			INT,
 	questionid           INT  NOT NULL    ,
 	failureattempts      INT      ,
 	answer               LONG VARCHAR      ,
 	score                INT      ,
-	learnerid            INT      
+	learnerid            INT  ,
+    autosubmit boolean
  ) engine=InnoDB;
  
  CREATE  TABLE lms.learningpathmodule ( 
@@ -86,6 +88,30 @@ CREATE  TABLE lms.learner (
 	learningpathid       INT      ,
 	moduleid             INT      
  ) engine=InnoDB;
+ 
+ 
+  CREATE  TABLE lms.testcases ( 
+	id     INT     AUTO_INCREMENT  PRIMARY KEY ,
+	questionid INT,
+    input       long varchar,
+	output      long varchar      
+ ) engine=InnoDB;
+ 
+ 
+   CREATE  TABLE lms.solution ( 
+	id               INT     AUTO_INCREMENT  PRIMARY KEY ,
+	questionid       INT      ,
+    languageid       INT,
+    templatecode long varchar,
+    solutioncode long varchar,
+    executioncode long varchar
+ ) engine=InnoDB;
+ 
+   CREATE  TABLE lms.languages ( 
+	id         INT     AUTO_INCREMENT  PRIMARY KEY ,
+	name       VARCHAR(50)
+ ) engine=InnoDB;
+ 
  
  INSERT INTO `institute`(name,location) VALUES ('Indu','Hyderabad ');
  INSERT INTO complexity(name) VALUES ('easy'),('medium'),('difficult');
