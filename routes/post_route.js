@@ -3,11 +3,10 @@ const postController = require("../controller/post");
 
 const router = express.Router();
 
-router.post("/runjavascript",postController.runjavascript);
 router.post("/savequestion",postController.savequestion);
-router.post("/verifyusercode",postController.verifyusercode);
+router.post("/verifyusercode",postController.submitUsercode);
+router.post("/uploads",postController.uploads);
+
+
 
 module.exports = router;
-
-
-    

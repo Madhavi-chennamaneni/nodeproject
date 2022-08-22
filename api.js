@@ -17,7 +17,7 @@ app.use(function (req, res, next) {
 app.use(express.text())
 app.set("view engine","ejs")
 
-//app.use("/api",getRoute);
+app.use("/api",getRoute);
 app.use("/api",postRoute);
 //app.use("/api",updateRoute);
 //app.use("/api",deleteRoute)

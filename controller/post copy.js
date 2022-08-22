@@ -15,11 +15,43 @@ let connection = mysql.createConnection({
 	database: 'lms'
 });
 
+let runjavascript = (req, res) => {
+	var data = JSON.parse(req.body).code;
+	//console.log(typeof(data));
+	//var data=req.body.code;
+	console.log("api hit");
+	runcode(req,res,data)
+	// fs.writeFile("code.txt", data, (err) => {
+	// 	if (err) {
+	// 		console.log(err);
+	// 		res.end(JSON.stringify({ "body": "Error at server, please report to moderator" }));
+	// 	}
+	// 	else {
+	// 		childProcess.execFile('node', ["code.txt"], function (err, stdout, stderr) {
+	// 			if (err) {
+	// 				// handle err
+	// 				//fs.unlinkSync("code.txt");
+	// 				res.end(JSON.stringify({ "body": err.toString() }));
+	// 			}
+	// 			else if (stdout) {
+	// 				console.log(stdout);
+	// 				//fs.unlinkSync("code.txt");
+	// 				res.end(JSON.stringify({ "body": stdout.toString() }));
+	// 			}
+	// 			else {
+	// 				//fs.unlinkSync("code.txt");
+	// 				res.end(JSON.stringify({ "body": stderr.toString() }));
+	// 			}
+	// 		});
+	// 	}
+	// 	//fs.unlinkSync("code.txt");
+	// });
 
-async function runcode(req,res,data,arguments,output)
+}
+
+
+async function runcode(data,arguments)
 {
-	var args=arguments;
-	console.log(output);
 	return new Promise((resolve,reject)=>{
 	
 	fs.writeFile("code.txt", data, (err) => {
@@ -30,31 +62,30 @@ async function runcode(req,res,data,arguments,output)
 		else {
 			childProcess.execFile('node', arguments, function (err, stdout, stderr) {
 				if (err) {
+					// handle err
+					//fs.unlinkSync("code.txt");
+					//res.end(JSON.stringify({ "body": err.toString() }));
+
 					reject(err);
+
 				}
 				else if (stdout) {
-					if(output!=undefined)
-					{
-					if (stdout.replace(/\n/g, '') == output) {	
-							resolve(stdout);
-						}
-						else {
-							args.shift();
-							res.end(JSON.stringify({ "body": "Testcase failed for input "+(args)+" and output "+output ,"result":"success"}));
-							reject( stdout);
-						}
-					}
+					console.log(stdout);
+					//fs.unlinkSync("code.txt");
+					//res.end(JSON.stringify({ "body": stdout.toString() }));
 					resolve(stdout);
 				}
 				else {
+					//fs.unlinkSync("code.txt");
+					//res.end(JSON.stringify({ "body": stderr.toString() }));
 					reject(stderr);
 				}
 			});
 		}
+		//fs.unlinkSync("code.txt");
 	});
 })
 }
-
 
 
 
@@ -72,13 +103,12 @@ let savequestion = (req, res) => {
 	var iodata = Jsonrequest.io;
 	var dbentry = Jsonrequest.qdata;
 	//var QuestionCodes = Object.values(Jsonrequest.qcodes)
-	var QuestionCodes = getJavascriptQuestionobject(Jsonrequest.qcodes);
+	var QuestionCodes = getJavascriptQuestionobject(Jsonrequest.qcodes)
 	var QuestionText = QuestionCodes.solutioncode + QuestionCodes.executioncode;
 
 	var resultid;
-	checkTestCases(req,res,QuestionText, iodata).then((response) => {
 
-	//	res.end(json.stringify({"body":response, "result":"success"}));
+	getResult(QuestionText, iodata).then((response) => {
 		//let query = "INSERT INTO question (shortdesc,longdesc,categoryid,moduleid,templatecode,exampleinput,exampleoutput,complexityid,autoevaluate,marks,timelimit) VALUES (\"" + dbentry.shortdesc.toString() + "\",\"" + dbentry.longdesc + "\"," + parseInt(dbentry.category) + "," + parseInt(dbentry.module) + ",\"" + dbentry.longdesc + "\",\"" + dbentry.exampleinput + "\",\"" + dbentry.exampleoutput + "\"," + parseInt(dbentry.complexity) + "," + parseInt(dbentry.autoevaluate) + "," + parseInt(dbentry.marks) + "," + parseInt(dbentry.maxtime) + ");"
 		let query = `INSERT INTO question (shortdesc,longdesc,categoryid,moduleid,templatecode,exampleinput,exampleoutput,complexityid,autoevaluate,marks,timelimit) VALUES (` + JSON.stringify(dbentry.shortdesc) + `,` + JSON.stringify(dbentry.longdesc) + `,` + parseInt(dbentry.category) + `,` + parseInt(dbentry.module) + `,` + JSON.stringify(dbentry.longdesc) + `,` + JSON.stringify(dbentry.exampleinput) + `,` + JSON.stringify(dbentry.exampleoutput) + `,` + parseInt(dbentry.complexity) + `,` + parseInt(dbentry.autoevaluate) + `,` + parseInt(dbentry.marks) + `,` + parseInt(dbentry.maxtime) + `)`;
 
@@ -120,99 +150,146 @@ let savequestion = (req, res) => {
 
 
 
-async function checkTestCases(req,res,data, cases) {
-    return new Promise((resolve, reject) => {
-    PromiseRespCount = 0;
-    for (var i = 0; i < cases.length; i++) {
-        var input = (cases[i].input);
-        var output = cases[i].output;
-        var args=buildargs(input);
-        runcode(req,res,data, args, output).then((response) => {
-                if (PromiseRespCount == cases.length - 1) {
-                    fs.unlinkSync("code.txt");
-                    resolve("All test cases passed and question added to database");
-                }
-                PromiseRespCount++;	               
-        }).catch((error) => {
-			reject("Testcase failed for input "+(args)+" and output "+output);
-        })
-    }
-})
-}
+async function getResult(data, cases) {
+		return new Promise((resolve, reject) => {
+		PromiseRespCount = 0;
+		for (var i = 0; i < cases.length; i++) {
+			var input = (cases[i].input);
+			var output = cases[i].output;
+			// var inputstrarr = input.split('<>');
+			// var args = ["code.txt", ...inputstrarr];
 
+			var args=buildargs(input);
+			runcode(data, args, output).then((response) => {
+				if (PromiseRespCount == cases.length - 1) {
+					fs.unlinkSync("code.txt");
+					resolve(response);
+				}
+				PromiseRespCount++;
+			}).catch((error) => {
+				reject(error);
+			})
+		}
+	})
+}
 
 
 function buildargs(inputstrarr)
 {
 	var inputstrarray = inputstrarr.split('<>');
 			var args = ["code.txt", ...inputstrarray];
-			return args;
+
+			return inputstrarray;
 }
 
 
 
+// async function cheeckTestCases(data, args, output) {
 
-let submitUsercode = (req, res) => {
-	
+// 	return new Promise((resolve, reject) => {
+// 		fs.writeFile(args[0], data, (err) => {
+// 			if (err) {
+// 				console.log(err);
+// 				//res.end(JSON.stringify({ "body":"Error at server, please report to moderator"}));
+// 				return false;
+// 			}
+// 			else {
+// 				childProcess.execFile('node', args, function (err, stdout, stderr) {
+// 					if (err) {
+// 						console.log(err);
+// 						reject(stderr);
+// 					}
+// 					else if (stdout) {
+// 						if (stdout.replace(/\n/g, '') == output) {
+							
+// 							resolve(stdout);
+// 						}
+// 						else {
+// 							reject( stdout);
+// 						}
+// 					}
+// 					else {
+// 						console.log(stderr);
+// 						reject(stderr);
+// 					}
+// 				});
+// 			}
+// 		});
 
-    var ParsedRequest = JSON.parse(req.body);
+// 	})
+// }
+
+
+
+
+
+
+
+
+let verifyusercode = (req, res) => {
+	var ParsedRequest = JSON.parse(req.body)
 	console.log(ParsedRequest);
 	var usercode = ParsedRequest.code;
-    var custominput=ParsedRequest.custominput;
-   
-    let executioncodequery = `select * from solution where questionid=` + ParsedRequest.questionid;
-    connection.query(executioncodequery, (err, result3) => {
-        if (err) {
-            console.log(err);
+	let testcasequery = `select * from testcases where questionid=` + ParsedRequest.questionid;
+
+	var custominput=ParsedRequest.custominput;
+
+	connection.query(testcasequery, (err, result2) => {
+		if (err) {
+			console.log(err);
 		}
-            var executioncode = result3[0].executioncode;
-            var usercodetext = usercode + executioncode;
-			var args= buildargs(custominput);
 
-           runcode(req,res,usercodetext,args).then((response)=>{
-            res.end(JSON.stringify({ "body": response.toString(),"result":"success" })); 
-           }).catch((error)=>{
-            res.end(JSON.stringify({ "body": error.toString() ,"result":"success"})); 
-        })
+		console.log(result2);
 
-           let testcasequery = `select * from testcases where questionid=` + ParsedRequest.questionid;
-           connection.query(testcasequery, (err, result2) => {
-            if (err) {
-                console.log(err);
-            }
+		let executioncodequery = `select * from solution where questionid=` + ParsedRequest.questionid;
+		connection.query(executioncodequery, (err, result3) => {
+			if (err) {
+				console.log(err);
+			}
+			console.log(result3);
 
-            checkTestCases(req,res,usercodetext, result2).then((response) => {		
-                
-                		
+			var executioncode = result3[0].executioncode;
+			var questiondata = usercode + executioncode;
 
-				// enable on success
+			var arguments=buildargs(custominput);
 
-				//var score = calculatescore();
-				// var learnerid = 1;
-				let learnerquestionsquery =`update learnerquestions set answer=`+JSON.stringify(usercode)+`,score=10 WHERE learnerid=1 AND questionid=` + ParsedRequest.questionid;
-				// let learnerquestionsquery = `INSERT INTO learnerquestions(answer,score) values(` + JSON.stringify(usercode) + `, 10 ) WHERE learnerid=1 AND questionid=` + ParsedRequest.questionid;
-				connection.query(learnerquestionsquery, (err, result20) => {
+			runcode(req,res,questiondata,arguments)
+
+			getResult(questiondata, result2).then((response) => {
+				
+				res.end(JSON.stringify({ "body": response, "result": "success" }));
+
+				runcode(req,res,questiondata);
+				//calculate score
+
+				/* enable on success
+
+				var score = calculatescore();
+				var learnerid = 1;
+				let learnerquestionsquery = `insert into learnerquestions(answer,score) values("` + usercode + `",` + score + `) where learnerid=` + learnerid + ` and questionid=` + ParsedRequest.questionid;
+				connection.query(learnerquestionsquery, (err, result2) => {
 					if (err) {
 						console.log(err);
 					}
 
-					console.log("################################",result20)
 				})
-				
+				*/
 
 			}).catch((error) => {
+				res.end(JSON.stringify({ "body": error, "result": "success"}));
+				console.log("%%%%%%%%%%%%%%%%%%%%%%%"+error);
 
-                				//  enable on failure
+				/* enable on failure
 
-				// var score = calculatescore();
-				let learnerquestionsquery = `update learnerquestions set answer=`+JSON.stringify(usercode)+`,score=10 WHERE learnerid=1 AND questionid=` + ParsedRequest.questionid;
+				var score = calculatescore();
+				let learnerquestionsquery = `insert into learnerquestions(answer,score) values("` + usercode + `",` + score + `) where learnerid=` + learnerid + ` and questionid=` + ParsedRequest.questionid;
 				connection.query(learnerquestionsquery, (err, result2) => {
 					if (err) {
 						console.log(err);
 					}
 				})
 
-				let failureupdate = `update learnerquestions set failureattempts=failureattempts+1 WHERE learnerid= 1 AND questionid=` + ParsedRequest.questionid;
+				let failureupdate = `insert into learnerquestions set failureattempts=failureattempts+1 where learnerid=` + learnerid + ` and questionid=` + ParsedRequest.questionid;
 				connection.query(failureupdate, (err, result2) => {
 					if (err) {
 						console.log(err);
@@ -220,11 +297,16 @@ let submitUsercode = (req, res) => {
 
 				})
 
-				
+				*/
 
 			})
-        })
-    })
+
+		})
+
+		//  res.json(result2);
+	})
+
+
 }
 
 
@@ -246,7 +328,8 @@ let uploads = (req, res) => {
 }
 
 module.exports = {
+	runjavascript, runjavascript,
 	savequestion: savequestion,
-	submitUsercode: submitUsercode,
+	verifyusercode: verifyusercode,
 	uploads: uploads
 }

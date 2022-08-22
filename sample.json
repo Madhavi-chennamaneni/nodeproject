@@ -1,0 +1,232 @@
+
+{"learning_path":"jumpstart","data":[
+  {
+    "module": "Data Structures",
+	"due_date": "2022-08-20",	 	
+    "id_module": 1,
+    "complexity": [
+      {
+        "qncount": 3,
+        "id_complexity": 1,
+    "questions": [
+      {
+        "id": 2,
+        "shortdesc": "EASY duplicate characters from a string",
+        "longdesc": "print duplicate characters from a string",
+        "categoryid": 1,
+        "moduleid": 2,
+        "templatecode": "",
+        "exampleinput": "hello",
+        "exampleoutput": "l",
+        "complexityid": 1,
+        "autoevaluate": 1,
+        "marks": 10,
+        "timelimit": 5
+      }
+    ]
+      },
+      {
+        "qncount": 2,
+        "id_complexity": 2,
+    "questions": [
+      {
+        "id": 2,
+        "shortdesc": "EASY duplicate characters from a string",
+        "longdesc": "print duplicate characters from a string",
+        "categoryid": 1,
+        "moduleid": 2,
+        "templatecode": "",
+        "exampleinput": "hello",
+        "exampleoutput": "l",
+        "complexityid": 1,
+        "autoevaluate": 1,
+        "marks": 10,
+        "timelimit": 5
+      }
+    ]
+      },
+      {
+        "qncount": 1,
+        "id_complexity": 3,
+    "questions": [
+      {
+        "id": 2,
+        "shortdesc": "EASY duplicate characters from a string",
+        "longdesc": "print duplicate characters from a string",
+        "categoryid": 1,
+        "moduleid": 2,
+        "templatecode": "",
+        "exampleinput": "hello",
+        "exampleoutput": "l",
+        "complexityid": 1,
+        "autoevaluate": 1,
+        "marks": 10,
+        "timelimit": 5
+      }
+    ]
+      }
+    ]
+  },
+  {
+    "module": "String",
+	"due_date": "2022-08-15",
+    "id_module": 2,
+    "complexity": [
+      {
+        "qncount": 3,
+        "id_complexity": 1,
+    "questions": [
+      {
+        "id": 2,
+        "shortdesc": "EASY duplicate characters from a string",
+        "longdesc": "print duplicate characters from a string",
+        "categoryid": 1,
+        "moduleid": 2,
+        "templatecode": "",
+        "exampleinput": "hello",
+        "exampleoutput": "l",
+        "complexityid": 1,
+        "autoevaluate": 1,
+        "marks": 10,
+        "timelimit": 5
+      }
+    ]
+      },
+      {
+        "qncount": 2,
+        "id_complexity": 2,
+    "questions": [
+      {
+        "id": 2,
+        "shortdesc": "EASY duplicate characters from a string",
+        "longdesc": "print duplicate characters from a string",
+        "categoryid": 1,
+        "moduleid": 2,
+        "templatecode": "",
+        "exampleinput": "hello",
+        "exampleoutput": "l",
+        "complexityid": 1,
+        "autoevaluate": 1,
+        "marks": 10,
+        "timelimit": 5
+      }
+    ]
+      },
+      {
+        "qncount": 1,
+        "id_complexity": 3,
+    "questions": [
+      {
+        "id": 2,
+        "shortdesc": "EASY duplicate characters from a string",
+        "longdesc": "print duplicate characters from a string",
+        "categoryid": 1,
+        "moduleid": 2,
+        "templatecode": "",
+        "exampleinput": "hello",
+        "exampleoutput": "l",
+        "complexityid": 1,
+        "autoevaluate": 1,
+        "marks": 10,
+        "timelimit": 5
+      }
+    ]
+      }
+    ]
+  },
+  {
+    "module": "Arrays",
+	"due_date": "2022-08-20",
+    "id_module": 3,
+    "complexity": [
+      {
+        "qncount": 1,
+        "id_complexity": 1,
+    "questions": [
+      {
+        "id": 2,
+        "shortdesc": "EASY duplicate characters from a string",
+        "longdesc": "print duplicate characters from a string",
+        "categoryid": 1,
+        "moduleid": 2,
+        "templatecode": "",
+        "exampleinput": "hello",
+        "exampleoutput": "l",
+        "complexityid": 1,
+        "autoevaluate": 1,
+        "marks": 10,
+        "timelimit": 5
+      }
+    ]
+      },
+      {
+        "qncount": 1,
+        "id_complexity": 2,
+    "questions": [
+      {
+        "id": 2,
+        "shortdesc": "EASY duplicate characters from a string",
+        "longdesc": "print duplicate characters from a string",
+        "categoryid": 1,
+        "moduleid": 2,
+        "templatecode": "",
+        "exampleinput": "hello",
+        "exampleoutput": "l",
+        "complexityid": 1,
+        "autoevaluate": 1,
+        "marks": 10,
+        "timelimit": 5
+      }
+    ]
+      },
+      {
+        "qncount": 1,
+        "id_complexity": 3,
+    "questions": [
+      {
+        "id": 2,
+        "shortdesc": "EASY duplicate characters from a string",
+        "longdesc": "print duplicate characters from a string",
+        "categoryid": 1,
+        "moduleid": 2,
+        "templatecode": "",
+        "exampleinput": "hello",
+        "exampleoutput": "l",
+        "complexityid": 1,
+        "autoevaluate": 1,
+        "marks": 10,
+        "timelimit": 5
+      }
+    ]
+      }
+    ]
+  },
+  {
+    "module": "Patterns",
+	"due_date": "2022-08-16",
+    "id_module": 4,
+    "complexity": [
+      {
+        "qncount": 1,
+        "id_complexity": 1,
+    "questions": [
+      {
+        "id": 5,
+        "shortdesc": "EASY Pyramid Program",
+        "longdesc": "taking the input of number of rows ",
+        "categoryid": 1,
+        "moduleid": 4,
+        "templatecode": "public class PrintPyramid{ public static void main(String args[]) {}} ",
+        "exampleinput": "5",
+        "exampleoutput": "**********\n***",
+        "complexityid": 1,
+        "autoevaluate": 1,
+        "marks": 20,
+        "timelimit": 5
+      }
+    ]
+      }
+    ]
+  }
+]
+}
