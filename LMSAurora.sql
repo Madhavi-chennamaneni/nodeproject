@@ -86,7 +86,9 @@ CREATE  TABLE lms.learner (
  CREATE  TABLE lms.learningpathmodule ( 
 	id                   INT     AUTO_INCREMENT  PRIMARY KEY ,
 	learningpathid       INT      ,
-	moduleid             INT      
+	moduleid             INT    ,
+	priority				INT
+	
  ) engine=InnoDB;
  
  
@@ -125,4 +127,5 @@ INSERT INTO `learningpathmodule`(learningpathid,moduleid) VALUES (1,1),(1,2),(1,
  INSERT INTO `question`(shortdesc,longdesc,categoryid,moduleid,templatecode,exampleinput,exampleoutput,complexityid,autoevaluate,marks,timelimit) VALUES (' EASY missing number in a given integer array','find the missing number in a given integer array of 1 to 5',1,3,'public class MissingNumberInArray \{ public static void main(String args[]) { }\} ','1,2,4,5','3',1,1,10,5),('EASY duplicate characters from a string','print duplicate characters from a string',1,2,'public class FindDuplicateCharacters\{ public static void main(String args[]) {}\}','hello','l',1,1,10,5),('EASY swap two numbers','swap two numbers without using the third variable',1,5,'public class SwapNumbers\{ public static void main(String args[]) {}\}','10,20','20,10',1,1,10,5),('EASY find the largest and smallest number','find the largest and smallest number in an unsorted integer array',1,3,'public class MaximumMinimumArray\{ public static void main(String args[]) {}\}','','',1,1,10,5),('EASY Pyramid Program','printing pyramid pattern with * character taking the input of number of rows ',1,4,'public class PrintPyramid\{ public static void main(String args[]) {}\} ','5','**********\n***',1,1,20,5);
 INSERT INTO `learner`(firstname,lastname,batchid,lastlogin,status,email,mobile,remarks) VALUES ('Ajay','Spencer',1,'2008-11-27 22:35:35',1,'otdi6@wax-ol.com','738-318-8675','John bought new car. John is walking. John is walking. Anne is walking. John has free time. '),('Erick','Leonard',2,'2008-10-23 11:53:44',1,'gguf.smkd@----i-.org','556-686-3581','Anne has free time. Tony is walking. Anne bought new car. John has free time. ');
 
-	
+	 INSERT INTO `languages`(name) VALUES ('Java'),('JavaScript');
+	 	 INSERT INTO lms.solution(questionid,languageid,templatecode,solutioncode,executioncode) VALUES (1,1,'Java','Java','Java'),(1,1,'JS','JS','JS');
