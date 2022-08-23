@@ -4,7 +4,7 @@ const postController = require("../controller/post");
 const router = express.Router();
 
 router.post("/savequestion",postController.savequestion);
-router.post("/verifyusercode",postController.submitUsercode);
+router.post("/submitusercode",postController.submitUsercode);
 router.post("/uploads",postController.uploads);
 
 

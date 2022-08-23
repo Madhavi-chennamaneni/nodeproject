@@ -7,6 +7,7 @@ router.get("/getlanguages",getController.getlanguages);
 //router.get("/savequestion",postController.savequestion);
 router.get("/getcomplexity",getController.getcomplexity);
 router.get("/getmodules",getController.getmodules);
+router.get("/runjavascriptcode",getController.runcode);
 
 
 
