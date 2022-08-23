@@ -249,5 +249,6 @@ let uploads = (req, res) => {
 module.exports = {
 	savequestion: savequestion,
 	submitUsercode: submitUsercode,
-	uploads: uploads
+	uploads: uploads,
+	runcode,runcode
 }
