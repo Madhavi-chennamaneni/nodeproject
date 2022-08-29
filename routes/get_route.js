@@ -8,7 +8,7 @@ router.get("/getlanguages",getController.getlanguages);
 router.get("/getcomplexity",getController.getcomplexity);
 router.get("/getmodules",getController.getmodules);
 router.get("/runjavascriptcode",getController.runcode);
-
+router.get("/getquestions",getController.getquestions);
 
 
 module.exports = router;

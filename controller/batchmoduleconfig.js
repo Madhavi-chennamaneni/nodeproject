@@ -9,7 +9,7 @@ let connection = mysql.createConnection({
     database: 'lms'
 });
 
-function readingCandidateCsvFile(req, res, filename) {
+function readingbatchmoduleconfigCsvFile(req, res, filename) {
     fs.readFile(filename, 'utf8', function (err, data) {
         if (err) {
             console.error(err);
@@ -17,37 +17,36 @@ function readingCandidateCsvFile(req, res, filename) {
         }
         else {
             lines = data.split("\n");
-            checkDublicateForCandidateCSV(req, res, lines);
+            checkDublicateForbatchmoduleconfigCSV(req, res, lines);
         }
     })
 }
 
-function checkDublicateForCandidateCSV(req, res, lines) {
+
+
+
+function checkDublicateForbatchmoduleconfigCSV(req, res, lines) {
 
     var columns = lines[0].split(",").length;
     console.log(columns);
     for (var i = 0; i < lines.length; i++) {
-        let CandidateData = {};
+        let batchmoduleconfig = {};
         result = "";
         isplit = lines[i].split(",");
-        CandidateData.email = isplit[0];
-        checkEmailfeild(isplit[0]);
+        batchmoduleconfig.moduleid = isplit[0];
+      //  checkNameFeild(isplit[0]);
 
-        CandidateData.firstname = isplit[1];
-        checkNameFeild(isplit[1]);
+      batchmoduleconfig.complexityid = isplit[1];
+       // checkNameFeild(isplit[1]);
 
-        CandidateData.lastname = isplit[2];
-        checkNameFeild(isplit[2]);
+       batchmoduleconfig.questionscount = isplit[2];
+        //checkNameFeild(isplit[2]);
 
-        CandidateData.batchid = isplit[3];
-        checkNumber(isplit[3]);
+        batchmoduleconfig.batchid = isplit[3];
+       // checkNumber(isplit[3]);
 
-        CandidateData.status = isplit[4];
-        checkNumber(isplit[4]);
-
-        CandidateData.phone = isplit[5];
-        checkPhoneNumber(isplit[5]);
-        CandidateData.remarks = isplit[6];
+       batchmoduleconfig.duedate = isplit[4];
+       // checkNumber(isplit[3]);
 
 
         if ((lines[i][lines[i].length - 1] == "\r") || (lines[i][lines[i].length - 1] == "\n")) {
@@ -68,17 +67,16 @@ function checkDublicateForCandidateCSV(req, res, lines) {
                     lines[j] = lines[j].substring(0, lines[j].length - 1);
                 }
                 if ((lines[j][lines[j].length - 1] == ",")) {
-                    lines[j] = lines[j] + " dublicate email";
+                    lines[j] = lines[j] + " dublicate batchname";
                 }
                 else {
-                    lines[j] = lines[j] + ", dublicate email";
+                    lines[j] = lines[j] + ", dublicate batchname";
                 }
             }
         }
 
-
         if (lines[i].split(",").length == columns) {
-            var candidatequery = `insert into lms.learner (email,firstname,lastname,batchid,status,mobile,remarks) values("` + CandidateData.email + `","` + CandidateData.firstname + `","` + CandidateData.lastname + `",` + parseInt(CandidateData.batchid) + `,` + parseInt(CandidateData.status) + `,` + parseInt(CandidateData.phone) + `,"` + CandidateData.remarks + `")`;
+            var candidatequery = `insert into lms.batchmoduleconfig (moduleid,complexityid,questionscount,batchid,duedate) values (` + parseInt(batchmoduleconfig.moduleid) + `,` + parseInt(batchmoduleconfig.complexityid) + `,` + parseInt(batchmoduleconfig.questionscount) + `,` + parseInt(batchmoduleconfig.batchid) + `,"` + batchmoduleconfig.duedate + `")`;
             connection.query(candidatequery, (err, result2) => {
                 if (err) {
                     console.log(err);
@@ -89,13 +87,13 @@ function checkDublicateForCandidateCSV(req, res, lines) {
         }
     }
     writedata = lines.join("\n");
-    writeProcessedCandidateCsvFile(req, res, writedata);
+    writeProcessedBatchCsvFile(req, res, writedata);
 
 }
 
-function writeProcessedCandidateCsvFile(req, res, writedata) {
+function writeProcessedBatchCsvFile(req, res, writedata) {
     // console.log(res);
-    fs.writeFile(CandidateCsvfileWritePath, writedata, (err) => {
+    fs.writeFile(BatchCsvfileWritePath, writedata, (err) => {
         if (err) {
             console.log(err);
         }
@@ -103,14 +101,14 @@ function writeProcessedCandidateCsvFile(req, res, writedata) {
             // res.download(CandidateCsvfileWritePath,"candidateprocessed.csv");
             console.log("Successfully Written to File.");
 
-            res.download(CandidateCsvfileWritePath, "candidateprocessed.csv");
+            res.download(BatchCsvfileWritePath, "batchprocessed.csv");
             // readingProcessedCandidateFile(req,res);
         }
     });
 }
 
 function readingProcessedCandidateFile(req, res) {
-    fs.readFile(CandidateCsvfileWritePath, 'utf8', function (err, data) {
+    fs.readFile(BatchCsvfileWritePath, 'utf8', function (err, data) {
         if (err) {
             console.error(err);
             return;
@@ -182,15 +180,15 @@ function checkNumber(phonetext) {
 
 
 let CandidateCsvFileReadPath = (path.join(__dirname + "/candidate.csv"));
-let CandidateCsvfileWritePath = (path.join(__dirname + "/candidateprocessed.csv"));
+let BatchCsvfileWritePath = (path.join(__dirname + "/candidateprocessed.csv"));
 
-let saveCandidateviacsv = ((req, res, filename) => {
-    readingCandidateCsvFile(req, res, filename);
+let savebatchmoduleconfigviacsv = ((req, res, filename) => {
+    readingbatchmoduleconfigCsvFile(req, res, filename);
 
 
 })
 
 
 module.exports = {
-    saveCandidateviacsv: saveCandidateviacsv
+    savebatchmoduleconfigviacsv: savebatchmoduleconfigviacsv
 }

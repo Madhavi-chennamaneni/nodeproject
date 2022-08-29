@@ -8,7 +8,12 @@ const { response } = require('../api');
 const { resolve } = require('path');
 //import fetch from 'node-fetch';
 const utils = require('./utils');
-
+const candidate=require('./candidatesupload');
+const institute=require('./instituteupload');
+const batch=require('./batchupload');
+const learningpathmodule=require('./learningpathmodule');
+const modules=require('./modulesupload');
+const batchmoduleconfig=require('./batchmoduleconfig');
 
 let connection = mysql.createConnection({
 	host: 'localhost',
@@ -27,7 +32,7 @@ function getJavascriptQuestionobject(questionsobject) {
 
 let savequestion = (req, res) => {
 	//console.log("save hit");
-	//console.log(req.body);
+	console.log(req.body);
 	var Jsonrequest = JSON.parse(req.body);
 	console.log(Jsonrequest);
 	var iodata = Jsonrequest.io;
@@ -88,7 +93,7 @@ async function checkTestCases(req, res, data, cases) {
 			var input = (cases[i].input);
 			var output = cases[i].output;
 			var args = buildargs(input);
-			runcode(req, res, data, args, output).then((response) => {
+			utils.runJavaScriptCode(req, res, data, args, output).then((response) => {
 				if (PromiseRespCount == cases.length - 1) {
 					fs.unlinkSync("code.txt");
 					resolve("All test cases passed and question added to database");
@@ -104,7 +109,7 @@ async function checkTestCases(req, res, data, cases) {
 
 
 function buildargs(inputstrarr) {
-	var inputstrarray = inputstrarr.split('<>');
+	var inputstrarray = inputstrarr.split('\n');
 	var args = ["code.txt", ...inputstrarray];
 	return args;
 }
@@ -189,15 +194,39 @@ let uploads = (req, res) => {
 	console.log("upload api hit");
 	var form = new formidable.IncomingForm();
 	form.parse(req, function (err, fields, files) {
+		console.log(fields);
 		var oldpath = files.file.filepath;
 		var newpath = './' + files.file.originalFilename;
 		fs.rename(oldpath, newpath, function (err) {
 			if (err) throw err;
-			res.write('File uploaded and moved!');
-			res.end();
+			//res.write('File uploaded and moved!');
+			//res.end();
+			if(fields.type=="candidates")
+			{
+			candidate.saveCandidateviacsv(req, res,newpath);
+			}
+			if(fields.type=="institute")
+			{
+				institute.saveCandidateviacsv(req, res,newpath);
+			}
+			if(fields.type=="batch")
+			{
+				batch.saveBatchviacsv(req, res,newpath);
+			}
+			if(fields.type=="learningpathmodule")
+			{
+				learningpathmodule.saveLearningpathmoduleviacsv(req, res,newpath);
+			}
+			if(fields.type=="modules")
+			{
+				modules.savemodulesviacsv(req, res,newpath);
+			}
+			if(fields.type=="batchmoduleconfig")
+			{
+				batchmoduleconfig.savebatchmoduleconfigviacsv(req, res,newpath);
+			}
 		})
-		console.log(fields);
-		console.log(files.file)
+		
 	})
 }
 

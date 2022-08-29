@@ -9,7 +9,7 @@ let connection = mysql.createConnection({
     database: 'lms'
 });
 
-function readingCandidateCsvFile(req, res, filename) {
+function readingInstituteCsvFile(req, res, filename) {
     fs.readFile(filename, 'utf8', function (err, data) {
         if (err) {
             console.error(err);
@@ -17,38 +17,25 @@ function readingCandidateCsvFile(req, res, filename) {
         }
         else {
             lines = data.split("\n");
-            checkDublicateForCandidateCSV(req, res, lines);
+            checkDublicateForInstituteCSV(req, res, lines);
         }
     })
 }
 
-function checkDublicateForCandidateCSV(req, res, lines) {
+function checkDublicateForInstituteCSV(req, res, lines) {
 
-    var columns = lines[0].split(",").length;
-    console.log(columns);
+     var columns = lines[0].split(",").length;
+    //console.log(columns);
     for (var i = 0; i < lines.length; i++) {
-        let CandidateData = {};
+        let InstituteData = {};
         result = "";
         isplit = lines[i].split(",");
-        CandidateData.email = isplit[0];
-        checkEmailfeild(isplit[0]);
+        InstituteData.name = isplit[0];
+        console.log(isplit[0])
+        // checkNameFeild(isplit[0]);
 
-        CandidateData.firstname = isplit[1];
-        checkNameFeild(isplit[1]);
-
-        CandidateData.lastname = isplit[2];
-        checkNameFeild(isplit[2]);
-
-        CandidateData.batchid = isplit[3];
-        checkNumber(isplit[3]);
-
-        CandidateData.status = isplit[4];
-        checkNumber(isplit[4]);
-
-        CandidateData.phone = isplit[5];
-        checkPhoneNumber(isplit[5]);
-        CandidateData.remarks = isplit[6];
-
+        InstituteData.location = isplit[1];
+        // checkNameFeild(isplit[1]);
 
         if ((lines[i][lines[i].length - 1] == "\r") || (lines[i][lines[i].length - 1] == "\n")) {
             lines[i] = lines[i].substring(0, lines[i].length - 1);
@@ -68,28 +55,28 @@ function checkDublicateForCandidateCSV(req, res, lines) {
                     lines[j] = lines[j].substring(0, lines[j].length - 1);
                 }
                 if ((lines[j][lines[j].length - 1] == ",")) {
-                    lines[j] = lines[j] + " dublicate email";
+                    lines[j] = lines[j] + " dublicate institute";
                 }
                 else {
-                    lines[j] = lines[j] + ", dublicate email";
+                    lines[j] = lines[j] + ", dublicate institute";
                 }
             }
         }
 
-
+        console.log(lines[i].split(",")+"      "+columns);
         if (lines[i].split(",").length == columns) {
-            var candidatequery = `insert into lms.learner (email,firstname,lastname,batchid,status,mobile,remarks) values("` + CandidateData.email + `","` + CandidateData.firstname + `","` + CandidateData.lastname + `",` + parseInt(CandidateData.batchid) + `,` + parseInt(CandidateData.status) + `,` + parseInt(CandidateData.phone) + `,"` + CandidateData.remarks + `")`;
-            connection.query(candidatequery, (err, result2) => {
+            var institutequery = `insert into lms.institute (name,location) values("` + InstituteData.name + `","` + InstituteData.location +`")`;
+            connection.query(institutequery, (err, result2) => {
                 if (err) {
                     console.log(err);
                 }
-                console.log("db entry done");
+               // console.log(i+"     db entry done");
             })
 
         }
     }
-    writedata = lines.join("\n");
-    writeProcessedCandidateCsvFile(req, res, writedata);
+     writedata = lines.join("\n");
+     writeProcessedCandidateCsvFile(req, res, writedata);
 
 }
 
@@ -103,44 +90,44 @@ function writeProcessedCandidateCsvFile(req, res, writedata) {
             // res.download(CandidateCsvfileWritePath,"candidateprocessed.csv");
             console.log("Successfully Written to File.");
 
-            res.download(CandidateCsvfileWritePath, "candidateprocessed.csv");
+            res.download(CandidateCsvfileWritePath, "instituteprocessed.csv");
             // readingProcessedCandidateFile(req,res);
         }
     });
 }
 
-function readingProcessedCandidateFile(req, res) {
-    fs.readFile(CandidateCsvfileWritePath, 'utf8', function (err, data) {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        else {
-            lines = data.split("\n");
-            writeToDatabase(lines, req, res);
-        }
-    })
-}
+// function readingProcessedCandidateFile(req, res) {
+//     fs.readFile(CandidateCsvfileWritePath, 'utf8', function (err, data) {
+//         if (err) {
+//             console.error(err);
+//             return;
+//         }
+//         else {
+//             lines = data.split("\n");
+//             writeToDatabase(lines, req, res);
+//         }
+//     })
+// }
 
-function writeToDatabase(lines, req, res) {
-    let CandidateData = {};
-    for (var i = 0; i < lines.length; i++) {
-        let randompassword = generatePassword(10);
-        let hashedpassword = sha3_api(randompassword);
-        isplit = lines[i].split(",");
-        CandidateData.email = isplit[0];
-        CandidateData.name = isplit[1];
-        CandidateData.password = hashedpassword;
-        CandidateData.phone = isplit[2];
-        CandidateData.group = isplit[3];
-        if (isplit.length == 4) {
-            models.candidate.create(CandidateData).catch((result) => { console.log(result) });
-        }
-        else {
-            console.log("error in entries");
-        }
-    }
-}
+// function writeToDatabase(lines, req, res) {
+//     let CandidateData = {};
+//     for (var i = 0; i < lines.length; i++) {
+//         let randompassword = generatePassword(10);
+//         let hashedpassword = sha3_api(randompassword);
+//         isplit = lines[i].split(",");
+//         CandidateData.email = isplit[0];
+//         CandidateData.name = isplit[1];
+//         CandidateData.password = hashedpassword;
+//         CandidateData.phone = isplit[2];
+//         CandidateData.group = isplit[3];
+//         if (isplit.length == 4) {
+//             models.candidate.create(CandidateData).catch((result) => { console.log(result) });
+//         }
+//         else {
+//             console.log("error in entries");
+//         }
+//     }
+// }
 
 function checkEmailfeild(emailtext) {
     var email = emailtext;
@@ -180,17 +167,17 @@ function checkNumber(phonetext) {
 
 }
 
+// let CandidateCsvFileReadPath = (path.join(__dirname + "/institute.csv"));
+let CandidateCsvfileWritePath = (path.join(__dirname + "/instituteprocessed.csv"));
 
-let CandidateCsvFileReadPath = (path.join(__dirname + "/candidate.csv"));
-let CandidateCsvfileWritePath = (path.join(__dirname + "/candidateprocessed.csv"));
 
-let saveCandidateviacsv = ((req, res, filename) => {
-    readingCandidateCsvFile(req, res, filename);
+let saveInstituteviacsv = ((req, res, filename) => {
+    readingInstituteCsvFile(req, res, filename);
 
 
 })
 
 
 module.exports = {
-    saveCandidateviacsv: saveCandidateviacsv
+    saveCandidateviacsv: saveInstituteviacsv
 }

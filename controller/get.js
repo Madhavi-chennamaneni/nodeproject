@@ -65,10 +65,30 @@ let getcomplexity= async (req,res)=>{
 
 }
 
+let getquestions= async (req,res)=>{
+    return new Promise((resolve,reject)=>{
+
+    
+    console.log("questions hit");
+    let query="select * from lms.question";
+
+    connection.query(query,(err, result)=>{
+        if(err){
+            reject(res.end(JSON.stringify({ "body": err.toString() })));
+        }
+
+        resolve( res.json(result));
+
+    })
+    
+})
+
+}
+
 
 
 let runcode = async (req,res)=>{
-return new Promise((resolve,reject)=>{
+// return new Promise((resolve,reject)=>{
 
     var ParsedRequest = JSON.parse(req.body);
 	console.log(ParsedRequest);
@@ -93,7 +113,7 @@ return new Promise((resolve,reject)=>{
 		})
 
     })
-})
+// })
 
 }
 
@@ -102,5 +122,6 @@ module.exports={
     getlanguages:getlanguages,
     getcomplexity:getcomplexity,
     getmodules:getmodules,
-    runcode:runcode
+    runcode:runcode,
+    getquestions:getquestions
 }

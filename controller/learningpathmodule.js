@@ -9,7 +9,7 @@ let connection = mysql.createConnection({
     database: 'lms'
 });
 
-function readingCandidateCsvFile(req, res, filename) {
+function readingLearningpathmoduleCsvFile(req, res, filename) {
     fs.readFile(filename, 'utf8', function (err, data) {
         if (err) {
             console.error(err);
@@ -17,85 +17,74 @@ function readingCandidateCsvFile(req, res, filename) {
         }
         else {
             lines = data.split("\n");
-            checkDublicateForCandidateCSV(req, res, lines);
+            checkDublicateForLearningpathmoduleCSV(req, res, lines);
         }
     })
 }
 
-function checkDublicateForCandidateCSV(req, res, lines) {
+
+
+function checkDublicateForLearningpathmoduleCSV(req, res, lines) {
 
     var columns = lines[0].split(",").length;
     console.log(columns);
     for (var i = 0; i < lines.length; i++) {
-        let CandidateData = {};
+        let Learningpathmodule = {};
         result = "";
         isplit = lines[i].split(",");
-        CandidateData.email = isplit[0];
-        checkEmailfeild(isplit[0]);
+        Learningpathmodule.learningpathid = isplit[0];
+        checkNumber(isplit[0]);
 
-        CandidateData.firstname = isplit[1];
-        checkNameFeild(isplit[1]);
-
-        CandidateData.lastname = isplit[2];
-        checkNameFeild(isplit[2]);
-
-        CandidateData.batchid = isplit[3];
-        checkNumber(isplit[3]);
-
-        CandidateData.status = isplit[4];
-        checkNumber(isplit[4]);
-
-        CandidateData.phone = isplit[5];
-        checkPhoneNumber(isplit[5]);
-        CandidateData.remarks = isplit[6];
+        Learningpathmodule.moduleid = isplit[1];
+        checkNumber(isplit[1]);
 
 
-        if ((lines[i][lines[i].length - 1] == "\r") || (lines[i][lines[i].length - 1] == "\n")) {
-            lines[i] = lines[i].substring(0, lines[i].length - 1);
-        }
 
-        if (result.length > 0) {
-            lines[i] = lines[i] + "," + result;
-        }
+        // if ((lines[i][lines[i].length - 1] == "\r") || (lines[i][lines[i].length - 1] == "\n")) {
+        //     lines[i] = lines[i].substring(0, lines[i].length - 1);
+        // }
 
-        for (var j = i + 1; j < lines.length; j++) {
+        // if (result.length > 0) {
+        //     lines[i] = lines[i] + "," + result;
+        // }
 
-            jsplit = lines[j].split(",");
+        // for (var j = i + 1; j < lines.length; j++) {
 
-            if (isplit[0] == jsplit[0]) {
+        //     jsplit = lines[j].split(",");
 
-                if ((lines[j][lines[j].length - 1] == "\r") || (lines[j][lines[j].length - 1] == "\n")) {
-                    lines[j] = lines[j].substring(0, lines[j].length - 1);
-                }
-                if ((lines[j][lines[j].length - 1] == ",")) {
-                    lines[j] = lines[j] + " dublicate email";
-                }
-                else {
-                    lines[j] = lines[j] + ", dublicate email";
-                }
-            }
-        }
+        //     if (isplit[0] == jsplit[0]) {
+
+        //         if ((lines[j][lines[j].length - 1] == "\r") || (lines[j][lines[j].length - 1] == "\n")) {
+        //             lines[j] = lines[j].substring(0, lines[j].length - 1);
+        //         }
+        //         if ((lines[j][lines[j].length - 1] == ",")) {
+        //             lines[j] = lines[j] + " dublicate batchname";
+        //         }
+        //         else {
+        //             lines[j] = lines[j] + ", dublicate batchname";
+        //         }
+        //     }
+        // }
 
 
         if (lines[i].split(",").length == columns) {
-            var candidatequery = `insert into lms.learner (email,firstname,lastname,batchid,status,mobile,remarks) values("` + CandidateData.email + `","` + CandidateData.firstname + `","` + CandidateData.lastname + `",` + parseInt(CandidateData.batchid) + `,` + parseInt(CandidateData.status) + `,` + parseInt(CandidateData.phone) + `,"` + CandidateData.remarks + `")`;
+            var candidatequery = `insert into lms.learningpathmodule (learningpathid,moduleid) values(`+ parseInt(Learningpathmodule.learningpathid) + `,` + parseInt(Learningpathmodule.moduleid)+ `)`;
             connection.query(candidatequery, (err, result2) => {
                 if (err) {
                     console.log(err);
                 }
                 console.log("db entry done");
             })
-
         }
     }
     writedata = lines.join("\n");
-    writeProcessedCandidateCsvFile(req, res, writedata);
+    writeProcessedlearningpathmoduleCsvFile(req, res, writedata);
 
 }
 
-function writeProcessedCandidateCsvFile(req, res, writedata) {
+function writeProcessedlearningpathmoduleCsvFile(req, res, writedata) {
     // console.log(res);
-    fs.writeFile(CandidateCsvfileWritePath, writedata, (err) => {
+    fs.writeFile(LearningpathmoduleCsvfileWritePath, writedata, (err) => {
         if (err) {
             console.log(err);
         }
@@ -103,14 +92,14 @@ function writeProcessedCandidateCsvFile(req, res, writedata) {
             // res.download(CandidateCsvfileWritePath,"candidateprocessed.csv");
             console.log("Successfully Written to File.");
 
-            res.download(CandidateCsvfileWritePath, "candidateprocessed.csv");
+            res.download(LearningpathmoduleCsvfileWritePath, "learningpathmoduleprocessed.csv");
             // readingProcessedCandidateFile(req,res);
         }
     });
 }
 
 function readingProcessedCandidateFile(req, res) {
-    fs.readFile(CandidateCsvfileWritePath, 'utf8', function (err, data) {
+    fs.readFile(LearningpathmoduleCsvfileWritePath, 'utf8', function (err, data) {
         if (err) {
             console.error(err);
             return;
@@ -182,15 +171,15 @@ function checkNumber(phonetext) {
 
 
 let CandidateCsvFileReadPath = (path.join(__dirname + "/candidate.csv"));
-let CandidateCsvfileWritePath = (path.join(__dirname + "/candidateprocessed.csv"));
+let LearningpathmoduleCsvfileWritePath = (path.join(__dirname + "/candidateprocessed.csv"));
 
-let saveCandidateviacsv = ((req, res, filename) => {
-    readingCandidateCsvFile(req, res, filename);
+let saveLearningpathmoduleviacsv = ((req, res, filename) => {
+    readingLearningpathmoduleCsvFile(req, res, filename);
 
 
 })
 
 
 module.exports = {
-    saveCandidateviacsv: saveCandidateviacsv
+    saveLearningpathmoduleviacsv: saveLearningpathmoduleviacsv
 }

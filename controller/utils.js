@@ -1,12 +1,18 @@
 const fs = require('fs');
 var childProcess = require('child_process');
+const candidate=require('./candidatesupload')
+
+
+const candidateUploadCSV=candidate.candidateUploadCSV;
 
 async function runJavaScriptCode(req, res, data, arguments, output) {
 	var args = arguments;
+    var output1=output;
 	console.log(output);
 	return new Promise((resolve, reject) => {
 
 		fs.writeFile("code.txt", data, (err) => {
+           
 			if (err) {
 				console.log(err);
 				res.end(JSON.stringify({ "body": "Error at server, please report to moderator" }));
@@ -17,8 +23,9 @@ async function runJavaScriptCode(req, res, data, arguments, output) {
 						reject(err);
 					}
 					else if (stdout) {
+                        console.log("std output   "+stdout );
 						if (output != undefined) {
-							if (stdout.replace(/\n/g, '') == output) {
+							if (stdout.replace(/\n/g, '') == output1) {
 								resolve(stdout);
                                 //fs.unlink();
 							}
@@ -41,7 +48,7 @@ async function runJavaScriptCode(req, res, data, arguments, output) {
 
 
 function buildargs(inputstrarr) {
-	var inputstrarray = inputstrarr.split('<>');
+	var inputstrarray = inputstrarr.split('\n');
 	var args = ["code.txt", ...inputstrarray];
 	return args;
 }
@@ -49,5 +56,7 @@ function buildargs(inputstrarr) {
 
 module.exports = {
 	runJavaScriptCode, runJavaScriptCode,
-    buildargs:buildargs
+    buildargs:buildargs,
+    candidateUploadCSV:candidateUploadCSV
+    
 }
